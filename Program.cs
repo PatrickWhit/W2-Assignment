@@ -1,13 +1,22 @@
 ﻿using System.Reflection.Emit;
+using W1_assignment_template;
 
 class Program
 {
-    static void Main()
+    static void DisplayMenu()
     {
         Console.WriteLine("1. Display Characters");
         Console.WriteLine("2. Add Character");
         Console.WriteLine("3. Level Up Character");
         Console.Write("Choose an option> ");
+    }
+
+    static void Main()
+    {
+        var fileManager = new FileManager();
+        fileManager.Read();
+
+        DisplayMenu();
 
         var userInput = Console.ReadLine();
 
@@ -15,7 +24,7 @@ class Program
 
         if (userInput == "1") // list the pre-existing characters
         {
-            foreach (var line in lines)
+            foreach (var line in fileManager.FileContents)
             {
                 var cols = line.Split(",");
                 var name = cols[0];
