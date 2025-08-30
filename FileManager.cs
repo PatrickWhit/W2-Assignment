@@ -16,11 +16,11 @@
             FileContents = File.ReadAllLines(_fileName);
         }
 
-        public void Write()
+        public void Write(Character newCharacter)
         {
             using (StreamWriter writer = new StreamWriter(_fileName, true))
             {
-
+                writer.WriteLine(newCharacter);
             }
         }
     }

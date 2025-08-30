@@ -3,72 +3,82 @@ using W1_assignment_template;
 
 class Program
 {
-    static void DisplayMenu()
+    static void DisplayMenu() // Displays the menu
     {
         Console.WriteLine("1. Display Characters");
         Console.WriteLine("2. Add Character");
         Console.WriteLine("3. Level Up Character");
-        Console.Write("Choose an option> ");
+    }
+
+    static void ListCharStats(FileManager fileManager) // Reads all of the charatcers from input.csv
+    {
+        foreach (var line in fileManager.FileContents)
+        {
+            var cols = line.Split(",");
+            var name = cols[0];
+            var charClass = cols[1];
+            var lvl = cols[2];
+            var hp = cols[3];
+            var equipment = cols[4].Split("|");
+
+            Console.WriteLine($"\nName: {name}");
+            Console.WriteLine($"Class: {charClass}");
+            Console.WriteLine($"Level: {lvl}");
+            Console.WriteLine($"HP: {hp}");
+
+            Console.WriteLine("Character Equipment:");
+            foreach (var equip in equipment)
+            {
+                Console.WriteLine($"\t{equip}");
+            }
+            Console.WriteLine("------------------\n");
+        }
+    }
+
+    static void AddCharacter(FileManager fileManager) // Add a new character to input.csv
+    {
+        var newCharacter = new Character();
+
+        Console.Write("\nEnter your character's name: ");
+        newCharacter.name = Console.ReadLine();
+
+        Console.Write("Enter your character's class: ");
+        newCharacter.charClass = Console.ReadLine();
+
+        Console.Write("Enter your character's level: ");
+        newCharacter.lvl = int.Parse(Console.ReadLine());
+
+        Console.Write("Enter your character's health points: ");
+        newCharacter.hp = int.Parse(Console.ReadLine());
+
+        Console.Write("Enter your character's equipment (separate items with a '|'): ");
+        string temp = Console.ReadLine();
+        foreach (var t in temp.Split("|"))
+        {
+            newCharacter.equipment.Add(t);
+        }
+
+        fileManager.Write(newCharacter);
     }
 
     static void Main()
     {
+        // Create a fileManager class and read all line from the file
         var fileManager = new FileManager();
         fileManager.Read();
 
+        // Display the menu and prompt the user to enter an option
         DisplayMenu();
-
+        Console.Write("Choose an option> ");
         var userInput = Console.ReadLine();
-
-        var lines = File.ReadAllLines("input.csv");
 
         if (userInput == "1") // list the pre-existing characters
         {
-            foreach (var line in fileManager.FileContents)
-            {
-                var cols = line.Split(",");
-                var name = cols[0];
-                var charClass = cols[1];
-                var lvl = cols[2];
-                var hp = cols[3];
-                var equipment = cols[4].Split("|");
-
-                Console.WriteLine($"Name: {name}");
-                Console.WriteLine($"Class: {charClass}");
-                Console.WriteLine($"Level: {lvl}");
-                Console.WriteLine($"HP: {hp}");
-
-                Console.WriteLine("Character Equipment:");
-                foreach (var equip in equipment)
-                {
-                    Console.WriteLine($"\t{equip}");
-                }
-                Console.WriteLine("------------------\n");
-            }
+            ListCharStats(fileManager);
         }
         else if (userInput == "2") // Add a character to the list
         {
-            Console.Write("\nEnter your character's name: ");
-            string name = Console.ReadLine();
-
-            Console.Write("Enter your character's class: ");
-            string characterClass = Console.ReadLine();
-
-            Console.Write("Enter your character's level: ");
-            int level = int.Parse(Console.ReadLine());
-
-            Console.Write("Enter your character's health points: ");
-            int hp = int.Parse(Console.ReadLine());
-
-            Console.Write("Enter your character's equipment (separate items with a '|'): ");
-            string equipment = Console.ReadLine();
-
-            var newChartacter = $"{name},{characterClass},{level},{hp},{equipment}";
-
-            using (StreamWriter writer = new StreamWriter("input.csv", true))
-            {
-                writer.WriteLine(newChartacter);
-            }
+            AddCharacter(fileManager);
         }
         else if (userInput == "3") // Update an existing character
         {
@@ -76,7 +86,7 @@ class Program
 
             Console.WriteLine("\nList of Characters: ");
 
-            foreach (var line in lines) // foreach loop lists the names of all the characters
+            foreach (var line in fileManager.FileContents) // foreach loop lists the names of all the characters
             {
                 var cols = line.Split(",");
                 var name = cols[0];
@@ -87,7 +97,7 @@ class Program
             Console.Write("\nType in the name of the character you want to update> "); // user selects which character they want to update
             userInput = Console.ReadLine();
 
-            foreach (var line in lines)
+            foreach (var line in fileManager.FileContents)
             {
                 var cols = line.Split(",");
                 var name = cols[0];
