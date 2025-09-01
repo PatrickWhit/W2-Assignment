@@ -7,14 +7,35 @@ class Program
     {
         Console.WriteLine("1. Display Characters");
         Console.WriteLine("2. Add Character");
-        Console.WriteLine("3. Update Character");
+        Console.WriteLine("3. Update Character\n");
+    }
+
+    static string CorrectName(string line, int index)
+    {
+        var secondQuoteIndex = line.IndexOf('"', index); // get index of second quote to isolate name
+        var subString = line.Substring(1, secondQuoteIndex - 1); // isolate name with new second quote index
+
+        var subString1 = subString.Substring(0, index-1); // create sub-substrings from isolated name
+        var subString2 = subString.Substring(index + 1);
+
+        subString = subString2 + ' ' + subString1; // reverse sub-substrings to get correct name
+
+        line = subString + line.Substring(line.IndexOf('"', index) + 1); // put everything back together
+
+        return line;
     }
 
     static void ListCharStats(FileManager fileManager) // Reads all of the charatcers from input.csv
     {
         foreach (var line in fileManager.FileContents)
         {
-            var cols = line.Split(",");
+            var newLine = line;
+            if (line.StartsWith("\"")) // if name starts with quotes then name needs to be corrected
+            {
+                newLine = CorrectName(line, line.IndexOf(","));
+            }
+
+            var cols = newLine.Split(",");
             var name = cols[0];
 
             if (name == "Name") // if "Name" is the character name, meaning program is looking at the header, then iteration is skipped
@@ -93,8 +114,14 @@ class Program
 
             foreach (var line in fileManager.FileContents) // foreach loop lists the names of all the characters
             {
-                var cols = line.Split(",");
-                var name = cols[0];
+                var newLine = line;
+                if (line.StartsWith("\"")) // if name starts with quotes then name needs to be corrected
+                {
+                    newLine = CorrectName(line, line.IndexOf(","));
+                }
+
+                var cols = newLine.Split(",");
+                var name = cols[0].Replace("\"", "");
 
                 if (name == "Name") // if "Name" is the character name, meaning program is looking at the header, then iteration is skipped
                 {
@@ -104,18 +131,30 @@ class Program
                 Console.WriteLine($"\t{name}");
             }
 
-            var updateCharacters = new List<Character>(); // initilization of new Character class to store new line of input.csv
-
             Console.Write("\nType in the name of the character you want to update> "); // user selects which character they want to update
             userInput = Console.ReadLine();
 
+            var updateCharacters = new List<Character>(); // initilization of new Character class to store new line of input.csv
+
             foreach (var line in fileManager.FileContents)
             {
-                var cols = line.Split(",");
+                var newLine = line;
+                if (line.StartsWith("\"")) // if name starts with quotes then name needs to be corrected
+                {
+                    newLine = CorrectName(line, line.IndexOf(","));
+                }
+
+                var cols = newLine.Split(",");
                 var name = cols[0];
+
+                if (name == "Name") // if "Name" is the character name, meaning program is looking at the header, then header info is added and then skipped
+                {
+                    continue;
+                }
+
                 var charClass = cols[1];
-                var lvl = cols[2];
-                var hp = cols[3];
+                var lvl = int.Parse(cols[2]);
+                var hp = int.Parse(cols[3]);
                 var equipment = cols[4];
 
                 if (name == userInput && name != "Name") // if the name matches the one the user entered, then the new information gets added
@@ -128,8 +167,8 @@ class Program
 
                     oldCharacter.name = name;
                     oldCharacter.charClass = charClass;
-                    oldCharacter.lvl = int.Parse(lvl);
-                    oldCharacter.hp = int.Parse(hp);
+                    oldCharacter.lvl = lvl;
+                    oldCharacter.hp = hp;
 
                     foreach (var eq in equipment.Split("|"))
                     {
