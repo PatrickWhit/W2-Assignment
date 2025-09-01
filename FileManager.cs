@@ -11,16 +11,21 @@
 
         }
 
-        public void Read()
+        public void Read() // reads from input.csv
         {
             FileContents = File.ReadAllLines(_fileName);
         }
 
         public void Write(Character newCharacter)
         {
-            using (StreamWriter writer = new StreamWriter(_fileName, true))
+            var equipString = string.Join("|", newCharacter.equipment); // turns the equipment List into a single string
+
+            var newCharString = $"{newCharacter.name}, {newCharacter.charClass}," +
+                                $" {newCharacter.lvl}, {newCharacter.hp}, {equipString}"; // take the character and converts to a string
+
+            using (StreamWriter writer = new StreamWriter(_fileName, true)) // writes the string to inout.csv
             {
-                writer.WriteLine(newCharacter);
+                writer.WriteLine(newCharString);
             }
         }
     }

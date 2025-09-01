@@ -53,7 +53,8 @@ class Program
 
         Console.Write("Enter your character's equipment (separate items with a '|'): ");
         string temp = Console.ReadLine();
-        foreach (var t in temp.Split("|"))
+
+        foreach (string t in temp.Split('|'))
         {
             newCharacter.equipment.Add(t);
         }
@@ -143,7 +144,7 @@ class Program
         }
         else // if the user enters something other than 1, 2, or 3, then the program quits
         {
-            Console.WriteLine("Unreconized option selected");
+            Console.WriteLine("Invalid option selected");
         }
     }
 }

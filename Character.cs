@@ -11,7 +11,7 @@
 
         public Character()
         {
-
+            equipment = new List<string>();
         }
 
         public Character(string Name, string CharClass, int Lvl, int Hp, List<string> Equipment)
