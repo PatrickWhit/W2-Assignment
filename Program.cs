@@ -7,7 +7,7 @@ class Program
     {
         Console.WriteLine("1. Display Characters");
         Console.WriteLine("2. Add Character");
-        Console.WriteLine("3. Level Up Character");
+        Console.WriteLine("3. Update Character");
     }
 
     static void ListCharStats(FileManager fileManager) // Reads all of the charatcers from input.csv
@@ -104,7 +104,7 @@ class Program
                 Console.WriteLine($"\t{name}");
             }
 
-            List<string> tempFile = new List<string>(); // this list will store all of the lines of the csv file
+            var updateCharacters = new List<Character>(); // initilization of new Character class to store new line of input.csv
 
             Console.Write("\nType in the name of the character you want to update> "); // user selects which character they want to update
             userInput = Console.ReadLine();
@@ -118,42 +118,31 @@ class Program
                 var hp = cols[3];
                 var equipment = cols[4];
 
-                var updateCharacter = new List<Character>(); // initilization of new Character class
-
                 if (name == userInput && name != "Name") // if the name matches the one the user entered, then the new information gets added
                 {
-                    Console.Write("\nUpdate your character's name: ");
-                    name = Console.ReadLine();
-
-                    Console.Write("Update your character's class: ");
-                    charClass = Console.ReadLine();
-
-                    Console.Write("Update your character's level: ");
-                    lvl = Console.ReadLine();
-
-                    Console.Write("Update your character's health points: ");
-                    hp = Console.ReadLine();
-
-                    Console.Write("Update your character's equipment (separate items with a '|'): ");
-                    equipment = Console.ReadLine();
-
-                    tempFile.Add($"{name},{charClass},{lvl},{hp},{equipment}");
+                    updateCharacters.Add(WriteCharacter(fileManager)); // adds updated line to new character list
                 }
-                else
+                else // if name doesn't match then no charnges are made
                 {
-                    tempFile.Add($"{name},{charClass},{lvl},{hp},{equipment}");
+                    var oldCharacter = new Character();
+
+                    oldCharacter.name = name;
+                    oldCharacter.charClass = charClass;
+                    oldCharacter.lvl = int.Parse(lvl);
+                    oldCharacter.hp = int.Parse(hp);
+
+                    foreach (var eq in equipment.Split("|"))
+                    {
+                        oldCharacter.equipment.Add(eq);
+                    }
+
+                    updateCharacters.Add(oldCharacter);
                 }
             }
 
             File.WriteAllText("input.csv", string.Empty); // delete all previous data in preparation to add updated data
 
-            using (StreamWriter writer = new StreamWriter("input.csv", true))
-            {
-                foreach (var fileLine in tempFile)
-                {
-                    writer.WriteLine($"{fileLine}");
-                }
-            }
+            fileManager.ReWrite(updateCharacters);
         }
         else // if the user enters something other than 1, 2, or 3, then the program quits
         {
