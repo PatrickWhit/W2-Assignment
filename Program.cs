@@ -16,6 +16,12 @@ class Program
         {
             var cols = line.Split(",");
             var name = cols[0];
+
+            if (name == "Name") // if "Name" is the character name, meaning program is looking at the header, then iteration is skipped
+            {
+                continue;
+            }
+
             var charClass = cols[1];
             var lvl = cols[2];
             var hp = cols[3];
@@ -35,7 +41,7 @@ class Program
         }
     }
 
-    static void AddCharacter(FileManager fileManager) // Add a new character to input.csv
+    static Character WriteCharacter(FileManager fileManager) // Add a new character to input.csv
     {
         var newCharacter = new Character();
 
@@ -54,12 +60,12 @@ class Program
         Console.Write("Enter your character's equipment (separate items with a '|'): ");
         string temp = Console.ReadLine();
 
-        foreach (string t in temp.Split('|'))
+        foreach (string t in temp.Split('|')) // adds string variables to equipment list
         {
             newCharacter.equipment.Add(t);
         }
 
-        fileManager.Write(newCharacter);
+        return newCharacter; // returns Character class
     }
 
     static void Main()
@@ -79,12 +85,10 @@ class Program
         }
         else if (userInput == "2") // Add a character to the list
         {
-            AddCharacter(fileManager);
+            fileManager.Write(WriteCharacter(fileManager));
         }
         else if (userInput == "3") // Update an existing character
         {
-            List<string> tempFile = new List<string>(); // this list will store all of the lines of the csv file
-
             Console.WriteLine("\nList of Characters: ");
 
             foreach (var line in fileManager.FileContents) // foreach loop lists the names of all the characters
@@ -92,8 +96,15 @@ class Program
                 var cols = line.Split(",");
                 var name = cols[0];
 
+                if (name == "Name") // if "Name" is the character name, meaning program is looking at the header, then iteration is skipped
+                {
+                    continue;
+                }
+
                 Console.WriteLine($"\t{name}");
             }
+
+            List<string> tempFile = new List<string>(); // this list will store all of the lines of the csv file
 
             Console.Write("\nType in the name of the character you want to update> "); // user selects which character they want to update
             userInput = Console.ReadLine();
@@ -107,7 +118,9 @@ class Program
                 var hp = cols[3];
                 var equipment = cols[4];
 
-                if (name == userInput) // if the name matches the one the user entered, then the new information gets added
+                var updateCharacter = new List<Character>(); // initilization of new Character class
+
+                if (name == userInput && name != "Name") // if the name matches the one the user entered, then the new information gets added
                 {
                     Console.Write("\nUpdate your character's name: ");
                     name = Console.ReadLine();
