@@ -181,7 +181,9 @@ class Program
 
             File.WriteAllText("input.csv", string.Empty); // delete all previous data in preparation to add updated data
 
-            fileManager.ReWrite(updateCharacters);
+            fileManager.WriteHeader();// call a method in FileManager to rewrite the header before writing all character info
+
+            fileManager.ReWrite(updateCharacters); // call method in FileManager to rewrite all character info to input.csv
         }
         else // if the user enters something other than 1, 2, or 3, then the program quits
         {

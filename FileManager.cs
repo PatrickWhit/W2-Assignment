@@ -16,12 +16,20 @@
             FileContents = File.ReadAllLines(_fileName);
         }
 
+        public void WriteHeader()
+        {
+            using (StreamWriter writer = new StreamWriter(_fileName, true)) // writes the string to inout.csv
+            {
+                writer.WriteLine($"Name,Class,Level,HP,Equipment");
+            }
+        }
+
         public void Write(Character newCharacter)
         {
             var equipString = string.Join("|", newCharacter.equipment); // turns the equipment List into a single string
 
-            var newCharString = $"{newCharacter.name}, {newCharacter.charClass}," +
-                                $" {newCharacter.lvl}, {newCharacter.hp}, {equipString}"; // take the character and converts to a string
+            var newCharString = $"{newCharacter.name},{newCharacter.charClass}," +
+                                $"{newCharacter.lvl},{newCharacter.hp},{equipString}"; // take the character and converts to a string
 
             using (StreamWriter writer = new StreamWriter(_fileName, true)) // writes the string to inout.csv
             {
@@ -35,8 +43,8 @@
             {
                 var equipString = string.Join("|", character.equipment); // turns the equipment List into a single string
 
-                var CharString = $"{character.name}, {character.charClass}," +
-                                    $" {character.lvl}, {character.hp}, {equipString}"; // take the character and converts to a string
+                var CharString = $"{character.name},{character.charClass}," +
+                                    $"{character.lvl},{character.hp},{equipString}"; // take the character and converts to a string
 
                 using (StreamWriter writer = new StreamWriter(_fileName, true)) // writes the string to inout.csv
                 {
